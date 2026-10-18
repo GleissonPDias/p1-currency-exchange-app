@@ -20,18 +20,20 @@ function App() {
   }, []);
 
   return (
-    <div className="bg-white w-full h-full">
-      <Header />
-      <Divider />
-      <Title />
-      <CurrencyField
-        currencies={currencies}
-        from={from}
-        to={to}
-        onFromChange={setFrom}
-        onToChange={setTo}
-      />
-      <HistoryField from={from} to={to} />
+    <div className="bg-white min-h-screen w-full flex flex-col justify-between">
+      <div className="max-w-7xl w-full mx-auto">
+        <Header />
+        <Divider />
+        <Title />
+        <CurrencyField
+          currencies={currencies}
+          from={from}
+          to={to}
+          onFromChange={setFrom}
+          onToChange={setTo}
+        />
+        <HistoryField from={from} to={to} />
+      </div>
       <Footer />
     </div>
   );

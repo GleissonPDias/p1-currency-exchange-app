@@ -51,7 +51,7 @@ export default function Chart({ data, period }) {
   }));
 
   return (
-    <div className="w-full h-75">
+    <div className="w-full h-64 sm:h-72 md:h-80">
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart
           data={chartData}

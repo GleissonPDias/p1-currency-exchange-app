@@ -5,7 +5,7 @@ export default function DataTable({ data, onSort, sortField, sortDir }) {
   const { t, language } = useLanguage();
 
   return (
-    <table className="w-full border-collapse">
+    <table className="w-full min-w-[540px] border-collapse">
       <thead>
         <tr className="text-left text-sm text-gray-500 border-b border-gray-200">
           <th

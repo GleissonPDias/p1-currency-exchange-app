@@ -63,9 +63,9 @@ export default function HistoryField({ from, to }) {
   }
 
   return (
-    <section className="p-8">
-      <div className="flex items-center justify-between flex-wrap gap-4">
-        <h1 className="text-2xl">{t("historyTitle")}</h1>
+    <section className="p-4 sm:p-6 md:p-8">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <h1 className="text-xl sm:text-2xl font-bold text-gray-900">{t("historyTitle")}</h1>
         <PeriodSelector period={period} onChange={setPeriod} />
       </div>
 
@@ -80,37 +80,37 @@ export default function HistoryField({ from, to }) {
 
       {!loading && !error && data.length > 0 && (
         <>
-          <div className="mt-8 flex gap-4">
-            <div className="flex-1">
+          <div className="mt-6 sm:mt-8 flex flex-col lg:flex-row gap-6">
+            <div className="flex-1 w-full min-w-0 bg-white border border-gray-100 rounded-2xl p-2 sm:p-4 shadow-xs">
               <Chart data={filteredData} period={period} />
             </div>
-            <div className="w-64 border border-gray-200 rounded-2xl p-6 flex flex-col gap-4">
-              <p className="text-xs text-gray-400 tracking-widest font-semibold">
+            <div className="w-full lg:w-72 border border-gray-200 rounded-2xl p-4 sm:p-6 flex flex-row flex-wrap sm:flex-nowrap lg:flex-col justify-between gap-4 bg-white">
+              <p className="w-full text-xs text-gray-400 tracking-widest font-semibold uppercase">
                 MERCADO
               </p>
-              <div>
-                <p className="text-sm text-gray-500">Máxima</p>
-                <p className="text-lg font-bold text-gray-900">
+              <div className="flex-1 sm:flex-initial">
+                <p className="text-xs sm:text-sm text-gray-500">Máxima</p>
+                <p className="text-base sm:text-lg font-bold text-gray-900">
                   {formatRate(
                     Math.max(...filteredData.map((d) => d.rate)),
                     language,
                   )}
                 </p>
               </div>
-              <hr className="border-0 bg-slate-200 h-[0.5px]" />
-              <div>
-                <p className="text-sm text-gray-500">Mínima</p>
-                <p className="text-lg font-bold text-gray-900">
+              <hr className="hidden lg:block border-0 bg-slate-200 h-[0.5px]" />
+              <div className="flex-1 sm:flex-initial">
+                <p className="text-xs sm:text-sm text-gray-500">Mínima</p>
+                <p className="text-base sm:text-lg font-bold text-gray-900">
                   {formatRate(
                     Math.min(...filteredData.map((d) => d.rate)),
                     language,
                   )}
                 </p>
               </div>
-              <hr className="border-0 bg-slate-200 h-[0.5px]" />
-              <div>
-                <p className="text-sm text-gray-500">Variação</p>
-                <p className="text-lg font-bold text-emerald-600">
+              <hr className="hidden lg:block border-0 bg-slate-200 h-[0.5px]" />
+              <div className="flex-1 sm:flex-initial">
+                <p className="text-xs sm:text-sm text-gray-500">Variação</p>
+                <p className="text-base sm:text-lg font-bold text-emerald-600">
                   {(() => {
                     const rates = filteredData.map((d) => d.rate);
                     const first = rates[0];
@@ -123,7 +123,7 @@ export default function HistoryField({ from, to }) {
             </div>
           </div>
 
-          <div className="mt-8">
+          <div className="mt-6 sm:mt-8">
             <Filters
               filters={filters}
               onChange={setFilters}
@@ -131,8 +131,8 @@ export default function HistoryField({ from, to }) {
             />
           </div>
 
-          <div className="mt-4 flex items-center justify-between">
-            <p className="text-sm text-gray-500">
+          <div className="mt-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <p className="text-xs sm:text-sm text-gray-500">
               {filteredData.length} {t("recordsFound")}
             </p>
             <ExportButton
