@@ -13,17 +13,13 @@ export default function CurrencyField({
   onToChange,
 }) {
   const [amount, setAmount] = useState("1000");
-  const [result, setResult] = useState(null);
   const { rate, date, loading, error } = useExchangeRate(from, to);
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
 
-  useEffect(() => {
-    if (rate && amount && !isNaN(parseFloat(amount))) {
-      setResult(parseFloat(amount) * rate);
-    } else {
-      setResult(null);
-    }
-  }, [amount, rate]);
+  const result =
+    rate && amount && !isNaN(parseFloat(amount))
+      ? parseFloat(amount) * rate
+      : null;
 
   function handleSwap() {
     onFromChange(to);
@@ -77,7 +73,7 @@ export default function CurrencyField({
         <div className="flex text-gray-200 bg-emerald-900 p-4 rounded-b-2xl">
           <p className="flex-1">{t("commercialRate")}</p>
           <p>
-            1 {from} = {formatRate(rate)} {to} • {date}
+            1 {from} = {formatRate(rate, language)} {to} • {date}
           </p>
         </div>
       )}
