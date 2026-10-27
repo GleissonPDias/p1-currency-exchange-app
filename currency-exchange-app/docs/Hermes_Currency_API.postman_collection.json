@@ -1,0 +1,272 @@
+{
+  "info": {
+    "_postman_id": "c1f7a29e-64bc-4871-bc01-e25df38928ab",
+    "name": "Hermes Currency Exchange API",
+    "description": "Collection de testes da API pública Frankfurter utilizada no aplicativo Hermes para conversão monetária e consulta de séries temporais de câmbio.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://api.frankfurter.dev/v1",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "01 - Listar Todas as Moedas",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code deve ser 200 OK\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"Resposta deve ser um objeto JSON não vazio\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData).to.be.an('object');",
+              "    pm.expect(Object.keys(jsonData).length).to.be.above(0);",
+              "});",
+              "",
+              "pm.test(\"Deve conter moedas essenciais: USD, BRL, EUR\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData).to.have.property('USD');",
+              "    pm.expect(jsonData).to.have.property('BRL');",
+              "    pm.expect(jsonData).to.have.property('EUR');",
+              "});",
+              "",
+              "pm.test(\"Tempo de resposta inferior a 1500ms\", function () {",
+              "    pm.expect(pm.response.responseTime).to.be.below(1500);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/currencies",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "currencies"
+          ]
+        },
+        "description": "Retorna o dicionário de códigos ISO e descrições completas de todas as moedas suportadas pelo Banco Central Europeu."
+      },
+      "response": []
+    },
+    {
+      "name": "02 - Cotação Atual (USD -> BRL)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code deve ser 200 OK\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"Validação do schema da cotação\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData).to.have.property('amount', 1);",
+              "    pm.expect(jsonData).to.have.property('base', 'USD');",
+              "    pm.expect(jsonData).to.have.property('date');",
+              "    pm.expect(jsonData).to.have.property('rates');",
+              "    pm.expect(jsonData.rates).to.have.property('BRL');",
+              "    pm.expect(jsonData.rates.BRL).to.be.a('number');",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/latest?from=USD&to=BRL",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "latest"
+          ],
+          "query": [
+            {
+              "key": "from",
+              "value": "USD"
+            },
+            {
+              "key": "to",
+              "value": "BRL"
+            }
+          ]
+        },
+        "description": "Consulta a taxa de câmbio comercial mais recente entre USD (Dólar Americano) e BRL (Real Brasileiro)."
+      },
+      "response": []
+    },
+    {
+      "name": "03 - Cotação Atual (EUR -> USD)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code deve ser 200 OK\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"Verifica cotação EUR para USD\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.base).to.eql('EUR');",
+              "    pm.expect(jsonData.rates.USD).to.be.above(0);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/latest?from=EUR&to=USD",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "latest"
+          ],
+          "query": [
+            {
+              "key": "from",
+              "value": "EUR"
+            },
+            {
+              "key": "to",
+              "value": "USD"
+            }
+          ]
+        },
+        "description": "Consulta a taxa cambial mais recente entre Euro e Dólar Americano."
+      },
+      "response": []
+    },
+    {
+      "name": "04 - Histórico de Cotações (Série Temporal)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code deve ser 200 OK\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"Validação do objeto de séries históricas\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData).to.have.property('start_date');",
+              "    pm.expect(jsonData).to.have.property('end_date');",
+              "    pm.expect(jsonData).to.have.property('rates');",
+              "    pm.expect(jsonData.rates).to.be.an('object');",
+              "});",
+              "",
+              "pm.test(\"Cada registro diário contém taxa numérica da moeda destino\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    var dates = Object.keys(jsonData.rates);",
+              "    pm.expect(dates.length).to.be.above(0);",
+              "    var firstDate = dates[0];",
+              "    pm.expect(jsonData.rates[firstDate]).to.have.property('BRL');",
+              "    pm.expect(jsonData.rates[firstDate].BRL).to.be.a('number');",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/2026-09-01..2026-09-30?from=USD&to=BRL",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "2026-09-01..2026-09-30"
+          ],
+          "query": [
+            {
+              "key": "from",
+              "value": "USD"
+            },
+            {
+              "key": "to",
+              "value": "BRL"
+            }
+          ]
+        },
+        "description": "Consulta a série histórica diária de cotações entre duas datas especificadas no formato YYYY-MM-DD..YYYY-MM-DD."
+      },
+      "response": []
+    },
+    {
+      "name": "05 - Cenário de Erro - Moeda Inexistente",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code deve ser 404 Not Found\", function () {",
+              "    pm.response.to.have.status(404);",
+              "});",
+              "",
+              "pm.test(\"Retorna mensagem de erro\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData).to.have.property('message', 'not found');",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/latest?from=INVALID&to=BRL",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "latest"
+          ],
+          "query": [
+            {
+              "key": "from",
+              "value": "INVALID"
+            },
+            {
+              "key": "to",
+              "value": "BRL"
+            }
+          ]
+        },
+        "description": "Validação de resiliência e tratamento de erro quando uma moeda inexistente é informada."
+      },
+      "response": []
+    }
+  ]
+}
