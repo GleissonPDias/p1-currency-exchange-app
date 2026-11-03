@@ -1,4 +1,4 @@
-import { useLanguage } from "../context/LanguageContext";
+import { useLanguage } from "../context/useLanguage";
 
 export default function CurrencyInput({
   label,
@@ -9,7 +9,7 @@ export default function CurrencyInput({
   currencies,
   readOnly,
 }) {
-  const { language } = useLanguage();
+  const { language, t } = useLanguage();
 
   const displayValue = () => {
     if (readOnly && value && !isNaN(parseFloat(value))) {
@@ -25,8 +25,11 @@ export default function CurrencyInput({
     <div className="bg-white rounded-2xl p-4 sm:p-6 md:p-8 w-full shadow-sm">
       <p className="text-gray-500 font-semibold text-xs sm:text-sm">{label}</p>
       <div className="flex items-baseline gap-1.5 mt-1">
-        <span className="text-lg sm:text-xl font-semibold text-gray-400">{currency}</span>
+        <span className="text-lg sm:text-xl font-semibold text-gray-400">
+          {currency}
+        </span>
         <textarea
+          aria-label={label}
           className="text-2xl sm:text-3xl font-semibold resize-none w-full outline-none focus:ring-0 bg-transparent text-gray-900"
           rows={1}
           value={displayValue()}
@@ -36,6 +39,7 @@ export default function CurrencyInput({
       </div>
       <hr className="border-0 bg-slate-200 h-[0.5px] my-3 sm:my-4" />
       <select
+        aria-label={`${label} — ${t("currency")}`}
         value={currency}
         onChange={(e) => onCurrencyChange(e.target.value)}
         className="w-full p-2 border border-gray-200 rounded-lg text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-emerald-600 bg-white"

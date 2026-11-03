@@ -1,9 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { ArrowRightLeft } from "lucide-react";
 import CurrencyInput from "./CurrencyInput";
 import { useExchangeRate } from "../hooks/useExchangeRate";
-import { useLanguage } from "../context/LanguageContext";
-import { formatRate } from "../utils/format";
+import { useLanguage } from "../context/useLanguage";
+import { formatRate } from "../utils/formatters";
 
 export default function CurrencyField({
   currencies,
@@ -12,7 +12,7 @@ export default function CurrencyField({
   onFromChange,
   onToChange,
 }) {
-  const [amount, setAmount] = useState("1000");
+  const [amount, setAmount] = useState("1");
   const { rate, date, loading, error } = useExchangeRate(from, to);
   const { t, language } = useLanguage();
 
@@ -27,13 +27,18 @@ export default function CurrencyField({
   }
 
   function handleAmountChange(val) {
-    const num = val.replace(/[^0-9.]/g, "");
+    const cleaned = val.replace(/,/g, ".").replace(/[^\d.]/g, "");
+    const [integer, ...decimals] = cleaned.split(".");
+    const num =
+      decimals.length > 0 ? `${integer}.${decimals.join("")}` : integer;
     setAmount(num);
   }
 
   return (
     <section className="bg-emerald-950 rounded-2xl flex flex-col mx-4 my-6 sm:mx-6 md:mx-8 shadow-xl overflow-hidden">
-      <h1 className="text-white text-xl sm:text-2xl p-5 sm:p-7 md:p-8 font-bold">{t("converterTitle")}</h1>
+      <h1 className="text-white text-xl sm:text-2xl p-5 sm:p-7 md:p-8 font-bold">
+        {t("converterTitle")}
+      </h1>
       <hr className="border-0 bg-slate-700 h-[0.5px]" />
       <div className="p-4 sm:p-6 md:p-8 flex flex-col md:flex-row justify-center items-center gap-4 sm:gap-6 md:gap-8">
         <div className="w-full md:flex-1">
@@ -47,8 +52,9 @@ export default function CurrencyField({
           />
         </div>
         <button
+          type="button"
           onClick={handleSwap}
-          aria-label="Trocar moedas"
+          aria-label={t("swapCurrencies")}
           className="flex items-center justify-center shrink-0 rounded-full w-12 h-12 sm:w-14 sm:h-14 border border-gray-500 hover:bg-emerald-800 transition-all shadow-md rotate-90 md:rotate-0"
         >
           <ArrowRightLeft color="white" className="w-5 h-5 sm:w-6 sm:h-6" />
